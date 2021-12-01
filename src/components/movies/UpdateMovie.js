@@ -17,7 +17,7 @@ const UpdateMovie = () => {
 
     const loadMovies = async () =>{
 
-        const { data } = await axios.get(`/api/${id}/`);
+        const { data } = await axios.get(`/api/movies/${id}`);
         
         
         setTitle(data.title)
@@ -41,7 +41,7 @@ const UpdateMovie = () => {
 
         await axios({
             method: 'PUT',
-            url: `/api/${id}/`,
+            url: `/api/movies/${id}`,
             data: formField
         }).then(response => {
             console.log(response.data)

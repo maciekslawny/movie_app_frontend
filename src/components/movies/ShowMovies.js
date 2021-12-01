@@ -1,8 +1,8 @@
 import axios from 'axios';
 import React, {useState, useEffect, useContext} from 'react'
 import { Link } from 'react-router-dom';
-import AuthContext from '../utils/AuthContext';
-import TopBar from './TopBar';
+import AuthContext from '../../utils/AuthContext';
+import TopBar from '../TopBar';
 
 const ShowMovies = () => {
     let {user} = useContext(AuthContext)
@@ -10,7 +10,7 @@ const ShowMovies = () => {
     const [movies, setMovies] = useState([])
 
     const getMovies = async () => {
-        const response = await axios.get('/api/')
+        const response = await axios.get('/api/movies/')
         console.log(response.data)
         setMovies(response.data)
     }

@@ -2,7 +2,7 @@ import axios from 'axios'
 import React, {useState, useEffect} from 'react'
 import { useHistory, useParams } from 'react-router'
 import { Link } from 'react-router-dom'
-import TopBar from './TopBar'
+import TopBar from '../TopBar'
 
 const MovieDetail = () => {
 
@@ -15,7 +15,7 @@ const MovieDetail = () => {
     
 
     const getSingleMovie = async () => {
-        const { data } = await axios.get(`/api/${id}`)
+        const { data } = await axios.get(`/api/movies/${id}`)
         
         setMovie(data)
     }
@@ -27,7 +27,7 @@ const MovieDetail = () => {
 
     // Delete Movie
     const deleteMovie = async (id) => {
-        await axios.delete(`api/${id}/`)
+        await axios.delete(`api/movies/${id}`)
         history.push('')
     }
 

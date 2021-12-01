@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react'
 import { useHistory } from 'react-router';
-import TopBar from './TopBar';
+import TopBar from '../TopBar';
 
 
 const AddMovie = () => {
@@ -24,7 +24,7 @@ const AddMovie = () => {
 
         await axios({
             method: 'post',
-            url: '/api/',
+            url: '/api/movies/',
             data: formField
         }).then((response) => {
             console.log(response.data)
@@ -33,7 +33,7 @@ const AddMovie = () => {
 
     }
     return (
-
+        
       
         <div id="content-wrapper" class="d-flex flex-column">
 

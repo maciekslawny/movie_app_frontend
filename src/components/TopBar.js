@@ -9,7 +9,7 @@ const TopBar = () => {
         <div>
             {/* Topbar */}
             <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-                <p className="m-2">Show all Movies</p>
+                <p className="m-2">Movies App</p>
                 {/* Topbar Navbar */}
                 <ul className="navbar-nav ml-auto">
                 {/* Nav Item - Search Dropdown (Visible Only XS) */}
