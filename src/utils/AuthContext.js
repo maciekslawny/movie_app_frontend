@@ -1,113 +1,107 @@
-import { createContext, useState, useEffect } from 'react'
+import { createContext, useState, useEffect } from "react";
 import jwt_decode from "jwt-decode";
-import { useHistory } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 
-
-const AuthContext = createContext()
+const AuthContext = createContext();
 
 export default AuthContext;
 
+export const AuthProvider = ({ children }) => {
+  let [authTokens, setAuthTokens] = useState(() =>
+    localStorage.getItem("authTokens")
+      ? JSON.parse(localStorage.getItem("authTokens"))
+      : null
+  );
+  let [user, setUser] = useState(() =>
+    localStorage.getItem("authTokens")
+      ? jwt_decode(localStorage.getItem("authTokens"))
+      : null
+  );
+  let [loading, setLoading] = useState(true);
 
+  const history = useHistory();
 
-export const AuthProvider = ({children}) => {
+  let loginUser = async (e) => {
+    e.preventDefault();
+    console.log("form submited");
 
+    let response = await fetch("http://127.0.0.1:8000/api/token/", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: e.target.email.value,
+        password: e.target.password.value,
+      }),
+    });
 
-    
-    let [authTokens, setAuthTokens] = useState(()=> localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
-    let [user, setUser] = useState(()=> localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')) : null)
-    let [loading, setLoading] = useState(true)
+    let data = await response.json();
 
-    const history = useHistory()
+    if (response.status === 200) {
+      setAuthTokens(data);
+      setUser(jwt_decode(data.access));
+      localStorage.setItem("authTokens", JSON.stringify(data));
+      history.push("/");
+    } else {
+      alert("Something went wrong!");
+    }
+  };
 
-    let loginUser = async (e )=> {
+  let logoutUser = () => {
+    setAuthTokens(null);
+    setUser(null);
+    localStorage.removeItem("authTokens");
+    history.push("/login");
+  };
 
-        e.preventDefault()
-        console.log('form submited')
+  let updateToken = async () => {
+    console.log("update token called!");
+    let response = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ refresh: authTokens?.refresh }),
+    });
+    let data = await response.json();
 
-        let response = await fetch('http://127.0.0.1:8000/api/token/', {
-            method: 'post',
-            headers:{
-                'Content-Type':'application/json'
-            },
-            body: JSON.stringify({'email':e.target.email.value, 'password':e.target.password.value})
-        })
-
-        let data = await response.json()
-        
-        if(response.status === 200){
-            setAuthTokens(data)
-            setUser(jwt_decode(data.access))
-            localStorage.setItem('authTokens', JSON.stringify(data))
-            history.push('/')
-
-        }else{
-            alert('Something went wrong!')
-        }
-
+    if (response.status === 200) {
+      setAuthTokens(data);
+      setUser(jwt_decode(data.access));
+      localStorage.setItem("authTokens", JSON.stringify(data));
+    } else {
+      logoutUser();
     }
 
-    let logoutUser = () => {
-        setAuthTokens(null)
-        setUser(null)
-        localStorage.removeItem('authTokens')
-        history.push('/login')
+    if (loading) {
+      setLoading(false);
+    }
+  };
+
+  let contextData = {
+    user: user,
+    loginUser: loginUser,
+    logoutUser: logoutUser,
+  };
+
+  useEffect(() => {
+    if (loading) {
+      updateToken();
     }
 
-    let updateToken = async ()=> {
-        console.log('update token called!')
-        let response = await fetch('http://127.0.0.1:8000/api/token/refresh/', {
-            method: 'post',
-            headers:{
-                'Content-Type':'application/json'
-            },
-            body: JSON.stringify({'refresh': authTokens?.refresh})
-        })
-        let data = await response.json()
+    let fourMinutes = 1000 * 60 * 4;
+    let interval = setInterval(() => {
+      if (authTokens) {
+        updateToken();
+      }
+    }, fourMinutes);
+    return () => clearInterval(interval);
+  }, [authTokens, loading]);
 
-        if (response.status === 200){
-            setAuthTokens(data)
-            setUser(jwt_decode(data.access))
-            localStorage.setItem('authTokens', JSON.stringify(data))
-        }else{
-            logoutUser()
-        }
-
-        if (loading){
-            setLoading(false)
-        }
-
-    }
-
-    let contextData = {
-        user:user,
-        loginUser:loginUser,
-        logoutUser:logoutUser
-    
-    }
-
-    useEffect (()=>{
-
-        if(loading){
-            updateToken()
-        }
-
-        let fourMinutes = 1000 * 60 * 4
-        let interval = setInterval(()=>{
-            if(authTokens){
-                updateToken()
-            }
-        }, fourMinutes)
-        return()=> clearInterval(interval)
-
-    }, [authTokens, loading])
-
-    
-
-    return (
-        <AuthContext.Provider value={contextData}>
-            {loading ? null :  children}
-        </AuthContext.Provider>
-    )
-}
-
-
+  return (
+    <AuthContext.Provider value={contextData}>
+      {loading ? null : children}
+    </AuthContext.Provider>
+  );
+};
