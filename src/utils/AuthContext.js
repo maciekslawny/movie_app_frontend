@@ -23,7 +23,6 @@ export const AuthProvider = ({ children }) => {
 
   let loginUser = async (e) => {
     e.preventDefault();
-    console.log("form submited");
 
     let response = await fetch("http://127.0.0.1:8000/api/token/", {
       method: "post",
@@ -52,11 +51,9 @@ export const AuthProvider = ({ children }) => {
     setAuthTokens(null);
     setUser(null);
     localStorage.removeItem("authTokens");
-    history.push("/login");
   };
 
   let updateToken = async () => {
-    console.log("update token called!");
     let response = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
       method: "post",
       headers: {

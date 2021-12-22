@@ -1,154 +1,108 @@
+import React, { Component } from "react";
 import axios from "axios";
-import React, { useState } from "react";
-import { useHistory } from "react-router";
+import TopBar from "./TopBar";
+import { Link } from "react-router-dom";
 
-const RegistrationPage = () => {
-  const history = useHistory();
+export default class RegistrationPage extends Component {
+  constructor() {
+    super();
+    this.state = {
+      email: "",
+      username: "",
+      password: "",
+      is_active: true,
+    };
 
-  const [email, setEmail] = useState("");
-  const [user_name, setUserName] = useState("");
-  const [password, setPassword] = useState("");
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
 
-  const RegistrationInfo = async () => {
-    let formField = new FormData();
-    formField.append("email", email);
-    formField.append("user_name", user_name);
-    formField.append("password", password);
-
-    await axios({
-      method: "post",
-      url: "api/accounts/create/",
-      data: formField,
-    }).then((response) => {
-      console.log(response.data);
-      history.push("/");
+  handleInputChange(event) {
+    const target = event.target;
+    const value = target.type === "checkbox" ? target.checked : target.value;
+    const name = target.name;
+    this.setState({
+      [name]: value,
     });
+  }
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+    axios
+      .post(`/api/accounts/`, JSON.stringify(this.state), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        this.props.history.push(`/login`);
+      });
   };
 
-  return (
-    <div id="content-wrapper" class="d-flex flex-column">
-      {/* Main Content */}
-      <div id="content">
-        {/* Topbar */}
-        <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-          <p className="m-2">Registration</p>
-          {/* Topbar Navbar */}
-          <ul className="navbar-nav ml-auto">
-            {/* Nav Item - Search Dropdown (Visible Only XS) */}
-            {/* Nav Item - User Information */}
-            <li className="nav-item dropdown no-arrow">
-              <a
-                className="nav-link dropdown-toggle"
-                href="#"
-                id="userDropdown"
-                role="button"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
-                <span className="mr-2 d-none d-lg-inline text-gray-600 small">
-                  Douglas McGee
-                </span>
-                <img
-                  className="img-profile rounded-circle"
-                  src="img/undraw_profile.svg"
-                />
-              </a>
-              {/* Dropdown - User Information */}
-              <div
-                className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                aria-labelledby="userDropdown"
-              >
-                <a className="dropdown-item" href="#">
-                  <i className="fas fa-user fa-sm fa-fw mr-2 text-gray-400" />
-                  Profile
-                </a>
-                <a className="dropdown-item" href="#">
-                  <i className="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400" />
-                  Settings
-                </a>
-                <a className="dropdown-item" href="#">
-                  <i className="fas fa-list fa-sm fa-fw mr-2 text-gray-400" />
-                  Activity Log
-                </a>
-                <div className="dropdown-divider" />
-                <a
-                  className="dropdown-item"
-                  href="#"
-                  data-toggle="modal"
-                  data-target="#logoutModal"
-                >
-                  <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400" />
-                  Logout
-                </a>
+  render() {
+    return (
+      <div id="content-wrapper" class="d-flex flex-column">
+        {/* Main Content */}
+        <div id="content">
+          <TopBar />
+          <div className="col-lg-12 mb-4">
+            <div className="card shadow mb-4">
+              <div className="card-header py-3">
+                <h6 className="m-0 font-weight-bold text-primary">
+                  Login Page
+                </h6>
               </div>
-            </li>
-          </ul>
-        </nav>
-        {/* End of Topbar */}
-        {/* Begin Page Content */}
-        <div className="container-fluid">
-          {/* Content Row */}
-          {/* Content Row */}
-          <div className="row">
-            {/* Content Column */}
-            <div className="col-lg-12 mb-4">
-              {/* Approach */}
-              <div className="card shadow mb-4">
-                <div className="card-header py-3">
-                  <h6 className="m-0 font-weight-bold text-primary">
-                    Registration
-                  </h6>
-                </div>
-
-                <div className="m-3">
+              <div className="m-4">
+                <form>
                   <div className="form-group">
+                    <label htmlFor="exampleInputEmail1">Email address</label>
                     <input
-                      type="text"
-                      className="form-control form-control-lg"
-                      placeholder="Enter Email"
+                      type="email"
+                      className="form-control"
+                      placeholder="Enter email"
                       name="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      value={this.state.email}
+                      onChange={this.handleInputChange}
                     ></input>
                   </div>
                   <div className="form-group">
+                    <label htmlFor="exampleInputEmail1">Username</label>
                     <input
                       type="text"
-                      className="form-control form-control-lg"
-                      placeholder="Enter Username"
-                      name="user_name"
-                      value={user_name}
-                      onChange={(e) => setUserName(e.target.value)}
+                      className="form-control"
+                      placeholder="Enter username"
+                      name="username"
+                      value={this.state.username}
+                      onChange={this.handleInputChange}
                     ></input>
                   </div>
-
                   <div className="form-group">
+                    <label htmlFor="exampleInputPassword1">Password</label>
                     <input
-                      type="text"
-                      className="form-control form-control-lg"
+                      type="password"
+                      className="form-control"
                       placeholder="Enter password"
                       name="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      value={this.state.password}
+                      onChange={this.handleInputChange}
                     ></input>
+
+                    <small id="emailHelp" className="form-text text-muted">
+                      Do you already have an account? You can{" "}
+                      <Link to="/login"> login here </Link>
+                    </small>
                   </div>
+
                   <button
-                    className="btn btn-success"
-                    onClick={RegistrationInfo}
+                    className="btn btn-primary"
+                    onClick={this.handleSubmit}
                   >
                     Register
                   </button>
-                </div>
+                </form>
               </div>
             </div>
-            <div className="col-lg-6 mb-4"></div>
           </div>
         </div>
-        {/* /.container-fluid */}
       </div>
-    </div>
-  );
-};
-
-export default RegistrationPage;
+    );
+  }
+}

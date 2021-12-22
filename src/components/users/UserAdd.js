@@ -7,8 +7,10 @@ export default class UserAdd extends Component {
     super();
     this.state = {
       email: "",
-      user_name: "",
+      username: "",
       password: "",
+      is_active: true,
+      is_staff: false,
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -26,73 +28,91 @@ export default class UserAdd extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    console.log(JSON.stringify(this.state));
+    let token = JSON.parse(localStorage.getItem("authTokens")).access;
     axios
       .post(`/api/accounts/`, JSON.stringify(this.state), {
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + String(token),
+        },
       })
-      .then((res) => {});
+      .then((res) => {
+        this.props.history.push(`/users`);
+      });
   };
 
   render() {
     return (
-      <div id="content-wrapper" className="d-flex flex-column">
-        {/* Main Content */}
-        <div id="content">
-          <TopBar />
-          {/* Begin Page Content */}
-          <div className="container-fluid">
-            {/* Content Row */}
-            <div className="row">
-              {/* Content Column */}
-              <div className="col-lg-12 mb-4">
-                {/* Approach */}
-                <div className="card shadow mb-4">
-                  <div className="card-header py-3">
-                    <h6 className="m-0 font-weight-bold text-primary">
-                      Add User
-                    </h6>
-                  </div>
-                  <div className="m-3">
-                    <div className="form-group">
-                      <input
-                        type="text"
-                        className="form-control form-control-lg"
-                        placeholder="Enter Email"
-                        name="email"
-                        value={this.state.email}
-                        onChange={this.handleInputChange}
-                      ></input>
+      <div className="container-fluid">
+        {/* Content Row */}
+        <div className="row">
+          {/* Content Column */}
+          <div className="col-lg-12 mb-4">
+            {/* Approach */}
+            <div className="card shadow mb-4">
+              <div className="card-header py-3">
+                <h6 className="m-0 font-weight-bold text-primary">Add User</h6>
+              </div>
+              <div className="m-3">
+                <div className="form-group">
+                  <input
+                    type="text"
+                    className="form-control form-control-lg mb-2"
+                    placeholder="Enter Email"
+                    name="email"
+                    value={this.state.email}
+                    onChange={this.handleInputChange}
+                  ></input>
 
-                      <input
-                        type="text"
-                        className="form-control form-control-lg"
-                        placeholder="Enter username"
-                        name="user_name"
-                        value={this.state.user_name}
-                        onChange={this.handleInputChange}
-                      ></input>
-                      <input
-                        type="text"
-                        className="form-control form-control-lg"
-                        placeholder="Enter password"
-                        name="password"
-                        value={this.state.password}
-                        onChange={this.handleInputChange}
-                      ></input>
-                    </div>
-                    <button
-                      className="btn btn-success"
-                      onClick={this.handleSubmit}
-                    >
-                      Add Movie
-                    </button>
+                  <input
+                    type="text"
+                    className="form-control form-control-lg mb-2"
+                    placeholder="Enter username"
+                    name="username"
+                    value={this.state.username}
+                    onChange={this.handleInputChange}
+                  ></input>
+                  <input
+                    type="text"
+                    className="form-control form-control-lg mb-2"
+                    placeholder="Enter password"
+                    name="password"
+                    value={this.state.password}
+                    onChange={this.handleInputChange}
+                  ></input>
+                  <div className="form-check form-switch">
+                    <input
+                      className="form-check-input"
+                      checked={this.state.is_active}
+                      type="checkbox"
+                      onChange={this.handleInputChange}
+                      name="is_active"
+                      defaultChecked
+                    />
+                    <label className="form-check-label h4" htmlFor="scales">
+                      Active
+                    </label>
+                  </div>
+                  <div className="form-check form-switch">
+                    <input
+                      className="form-check-input"
+                      checked={this.state.is_staff}
+                      type="checkbox"
+                      onChange={this.handleInputChange}
+                      name="is_staff"
+                      defaultChecked
+                    />
+                    <label className="form-check-label h4" htmlFor="scales">
+                      Admin
+                    </label>
                   </div>
                 </div>
+                <button className="btn btn-success" onClick={this.handleSubmit}>
+                  Add User
+                </button>
               </div>
             </div>
           </div>
-          {/* /.container-fluid */}
         </div>
       </div>
     );

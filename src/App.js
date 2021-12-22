@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import SideBar from "./components/SideBar";
+import TopBar from "./components/TopBar";
 import RegistrationPage from "./components/RegistrationPage";
 import LoginPage from "./components/LoginPage";
 import PrivateRoute from "./utils/PrivateRoute";
@@ -28,46 +29,63 @@ const App = () => {
       <Router>
         <AuthProvider>
           <SideBar />
-          <Switch>
-            <PrivateRoute exact path="/movies/add" component={MovieAdd} />
-            <PrivateRoute
-              exact
-              path="/movies/update/:id"
-              component={MovieUpdate}
-            />
-            <PrivateRoute exact path="/movies/:id" component={MoviePage} />
-            <PrivateRoute exact path="/movies" component={MoviesList} />
+          <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+              <TopBar />
+              <Switch>
+                <PrivateRoute exact path="/movies/add" component={MovieAdd} />
+                <PrivateRoute
+                  exact
+                  path="/movies/update/:id"
+                  component={MovieUpdate}
+                />
+                <PrivateRoute exact path="/movies/:id" component={MoviePage} />
+                <PrivateRoute exact path="/movies" component={MoviesList} />
+                <PrivateRoute exact path="/actors/add" component={ActorAdd} />
+                <PrivateRoute
+                  exact
+                  path="/actors/update/:id"
+                  component={ActorUpdate}
+                />
+                <PrivateRoute exact path="/actors" component={ActorsList} />
+                <PrivateRoute exact path="/actors/:id" component={ActorPage} />
 
-            <PrivateRoute exact path="/actors/add" component={ActorAdd} />
-            <PrivateRoute
-              exact
-              path="/actors/update/:id"
-              component={ActorUpdate}
-            />
-            <PrivateRoute exact path="/actors" component={ActorsList} />
-            <PrivateRoute exact path="/actors/:id" component={ActorPage} />
+                <PrivateRoute
+                  exact
+                  path="/directors"
+                  component={DirectorsList}
+                />
+                <PrivateRoute
+                  exact
+                  path="/directors/add"
+                  component={DirectorAdd}
+                />
+                <PrivateRoute
+                  exact
+                  path="/directors/update/:id"
+                  component={DirectorUpdate}
+                />
+                <PrivateRoute
+                  exact
+                  path="/directors/:id"
+                  component={DirectorPage}
+                />
 
-            <PrivateRoute exact path="/directors" component={DirectorsList} />
-            <PrivateRoute exact path="/directors/add" component={DirectorAdd} />
-            <PrivateRoute
-              exact
-              path="/directors/update/:id"
-              component={DirectorUpdate}
-            />
-            <PrivateRoute
-              exact
-              path="/directors/:id"
-              component={DirectorPage}
-            />
-
-            <AdminRoute exact path="/users/add" component={UserAdd} />
-            <AdminRoute exact path="/users" component={UsersList} />
-            <AdminRoute exact path="/users/:id" component={UserPage} />
-            <AdminRoute exact path="/users/update/:id" component={UserUpdate} />
-
-            <Route exact path="/register" component={RegistrationPage} />
-            <Route exact path="/login" component={LoginPage} />
-          </Switch>
+                <AdminRoute exact path="/users/add" component={UserAdd} />
+                <AdminRoute exact path="/users" component={UsersList} />
+                <AdminRoute exact path="/users/:id" component={UserPage} />
+                <AdminRoute
+                  exact
+                  path="/users/update/:id"
+                  component={UserUpdate}
+                />
+                <Route exact path="/register" component={RegistrationPage} />
+                <Route exact path="/login" component={LoginPage} />
+                <PrivateRoute exact path="/:id" component={MoviesList} />
+                <PrivateRoute exact path="" component={MoviesList} />
+              </Switch>
+            </div>
+          </div>
         </AuthProvider>
       </Router>
     </div>

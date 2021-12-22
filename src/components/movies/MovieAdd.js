@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import TopBar from "../TopBar";
 
-class MovieAdd extends Component {
+export default class MovieAdd extends Component {
   constructor() {
     super();
     this.state = {
@@ -29,12 +29,17 @@ class MovieAdd extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    console.log(JSON.stringify(this.state));
+    let token = JSON.parse(localStorage.getItem("authTokens")).access;
     axios
       .post(`/api/movies/`, JSON.stringify(this.state), {
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + String(token),
+        },
       })
-      .then((res) => {});
+      .then((res) => {
+        this.props.history.push(`/movies`);
+      });
   };
 
   render() {
@@ -53,14 +58,14 @@ class MovieAdd extends Component {
                 <div className="card shadow mb-4">
                   <div className="card-header py-3">
                     <h6 className="m-0 font-weight-bold text-primary">
-                      List of Movies
+                      Add Movie
                     </h6>
                   </div>
                   <div className="m-3">
                     <div className="form-group">
                       <input
                         type="text"
-                        className="form-control form-control-lg"
+                        className="form-control form-control-lg mb-2"
                         placeholder="Enter Title"
                         name="title"
                         value={this.state.title}
@@ -68,8 +73,8 @@ class MovieAdd extends Component {
                       ></input>
 
                       <input
-                        type="text"
-                        className="form-control form-control-lg"
+                        type="date"
+                        className="form-control form-control-lg mb-2"
                         placeholder="Enter release date"
                         name="release_date"
                         value={this.state.release_date}
@@ -77,20 +82,19 @@ class MovieAdd extends Component {
                       ></input>
                       <input
                         type="text"
-                        className="form-control form-control-lg"
+                        className="form-control form-control-lg mb-2"
                         placeholder="Enter poster url"
                         name="poster_url"
                         value={this.state.poster_url}
                         onChange={this.handleInputChange}
                       ></input>
-                      <input
-                        type="text"
-                        className="form-control form-control-lg"
+                      <textarea
+                        className="form-control form-control-lg mb-2"
                         placeholder="Enter description"
                         name="description"
                         value={this.state.description}
                         onChange={this.handleInputChange}
-                      ></input>
+                      ></textarea>
                       <input
                         type="text"
                         className="form-control form-control-lg"
@@ -117,5 +121,3 @@ class MovieAdd extends Component {
     );
   }
 }
-
-export default MovieAdd;

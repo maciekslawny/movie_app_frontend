@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import TopBar from "../TopBar";
+import { Link } from "react-router-dom";
 
 export default class ActorUpdate extends Component {
   constructor() {
@@ -11,6 +12,7 @@ export default class ActorUpdate extends Component {
       gender: "",
       kind: "actor",
       biography: "",
+      profile_path: "",
       place_of_birth: "",
       api_id: "",
     };
@@ -29,114 +31,130 @@ export default class ActorUpdate extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    const id = this.props.match.params.id;
-    console.log(JSON.stringify(this.state));
+    const actorId = this.props.match.params.id;
+    let token = JSON.parse(localStorage.getItem("authTokens")).access;
     axios
-      .put(`/api/movies/actors/${id}`, JSON.stringify(this.state), {
-        headers: { "Content-Type": "application/json" },
+      .put(`/api/movies/actors/${actorId}/`, JSON.stringify(this.state), {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + String(token),
+        },
       })
-      .then((res) => {});
+      .then((res) => {
+        this.props.history.push(`/actors/${actorId}`);
+      });
   };
 
   async componentDidMount() {
     const id = this.props.match.params.id;
-    console.log(id);
-    const { data } = await axios.get(`/api/movies/actors/${id}`);
+    let token = JSON.parse(localStorage.getItem("authTokens")).access;
+    const { data } = await axios.get(`/api/movies/actors/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + String(token),
+      },
+    });
 
-    this.setState({ name: data.name });
-    this.setState({ birthday: data.birthday });
-    this.setState({ gender: data.gender });
-    this.setState({ kind: data.kind });
-    this.setState({ biography: data.biography });
-    this.setState({ place_of_birth: data.place_of_birth });
-    this.setState({ api_id: data.api_id });
-
-    console.log(this.state);
+    this.setState({
+      name: data.name,
+      birthday: data.birthday,
+      gender: data.gender,
+      kind: data.kind,
+      biography: data.biography,
+      profile_path: data.profile_path,
+      place_of_birth: data.place_of_birth,
+      api_id: data.api_id,
+      id: data.id,
+    });
   }
 
   render() {
     return (
-      <div id="content-wrapper" className="d-flex flex-column">
-        {/* Main Content */}
-        <div id="content">
-          <TopBar />
-          {/* Begin Page Content */}
-          <div className="container-fluid">
-            {/* Content Row */}
-            <div className="row">
-              {/* Content Column */}
-              <div className="col-lg-12 mb-4">
-                {/* Approach */}
-                <div className="card shadow mb-4">
-                  <div className="card-header py-3">
-                    <h6 className="m-0 font-weight-bold text-primary">
-                      Update Actor
-                    </h6>
-                  </div>
-                  <div className="m-3">
-                    <div className="form-group">
-                      <input
-                        type="text"
-                        className="form-control form-control-lg"
-                        placeholder="Enter Name"
-                        name="name"
-                        value={this.state.name}
-                        onChange={this.handleInputChange}
-                      ></input>
+      <div className="container-fluid">
+        {/* Content Row */}
+        <Link
+          className="btn btn-primary btn-sm m-2"
+          to={`/actors/${this.state.id}`}
+        >
+          {" "}
+          Go Back{" "}
+        </Link>
+        <div className="row">
+          {/* Content Column */}
+          <div className="col-lg-12 mb-4">
+            {/* Approach */}
+            <div className="card shadow mb-4">
+              <div className="card-header py-3">
+                <h6 className="m-0 font-weight-bold text-primary">
+                  Update Actor
+                </h6>
+              </div>
+              <div className="m-3">
+                <div className="form-group">
+                  <input
+                    type="text"
+                    className="form-control form-control-lg mb-2"
+                    placeholder="Enter Name"
+                    name="name"
+                    value={this.state.name}
+                    onChange={this.handleInputChange}
+                  ></input>
 
-                      <input
-                        type="date"
-                        className="form-control form-control-lg"
-                        placeholder="Enter Birthday"
-                        name="birthday"
-                        value={this.state.birthday}
-                        onChange={this.handleInputChange}
-                      ></input>
-                      <select
-                        name="gender"
-                        onChange={this.handleInputChange}
-                        className="form-control form-control-lg"
-                      >
-                        <option value="male">Male</option>
-                        <option value="famale">Famale</option>
-                      </select>
-                      <input
-                        type="text"
-                        className="form-control form-control-lg"
-                        placeholder="Enter biography"
-                        name="biography"
-                        value={this.state.biography}
-                        onChange={this.handleInputChange}
-                      ></input>
-                      <input
-                        type="text"
-                        className="form-control form-control-lg"
-                        placeholder="Enter place of birth"
-                        name="place_of_birth"
-                        value={this.state.place_of_birth}
-                        onChange={this.handleInputChange}
-                      ></input>
-                      <input
-                        type="text"
-                        className="form-control form-control-lg"
-                        placeholder="Enter api id"
-                        name="api_id"
-                        value={this.state.api_id}
-                        onChange={this.handleInputChange}
-                      ></input>
-                    </div>
-                    <button
-                      className="btn btn-success"
-                      onClick={this.handleSubmit}
-                    >
-                      Update Actor
-                    </button>
-                  </div>
+                  <input
+                    type="date"
+                    className="form-control form-control-lg mb-2"
+                    placeholder="Enter Birthday"
+                    name="birthday"
+                    value={this.state.birthday}
+                    onChange={this.handleInputChange}
+                  ></input>
+                  <select
+                    name="gender"
+                    onChange={this.handleInputChange}
+                    className="form-control form-control-lg mb-2"
+                    value={this.state.gender}
+                  >
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                  <textarea
+                    className="form-control form-control-lg mb-2"
+                    placeholder="Enter biography"
+                    name="biography"
+                    value={this.state.biography}
+                    onChange={this.handleInputChange}
+                  ></textarea>
+                  <input
+                    type="text"
+                    className="form-control form-control-lg mb-2"
+                    placeholder="Enter profile photo path"
+                    name="profile_path"
+                    value={this.state.profile_path}
+                    onChange={this.handleInputChange}
+                  ></input>
+                  <input
+                    type="text"
+                    className="form-control form-control-lg mb-2"
+                    placeholder="Enter place of birth"
+                    name="place_of_birth"
+                    value={this.state.place_of_birth}
+                    onChange={this.handleInputChange}
+                  ></input>
+                  <input
+                    type="text"
+                    className="form-control form-control-lg"
+                    placeholder="Enter api id"
+                    name="api_id"
+                    value={this.state.api_id}
+                    onChange={this.handleInputChange}
+                  ></input>
                 </div>
+                <button className="btn btn-success" onClick={this.handleSubmit}>
+                  Update Actor
+                </button>
               </div>
             </div>
           </div>
-          {/* /.container-fluid */}
         </div>
       </div>
     );

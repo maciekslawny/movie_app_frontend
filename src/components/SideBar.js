@@ -25,7 +25,7 @@ const SideBar = () => {
         <hr className="sidebar-divider my-0" />
         {/* Nav Item - Dashboard */}
         <li className="nav-item active">
-          <a className="nav-link" href="index.html">
+          <a className="nav-link" href="/movies">
             <i className="fas fa-fw fa-tachometer-alt" />
             <span>Dashboard</span>
           </a>
@@ -176,11 +176,6 @@ const SideBar = () => {
         </li>
         {/* Divider */}
         <hr className="sidebar-divider" />
-
-        {/* Sidebar Toggler (Sidebar) */}
-        <div className="text-center d-none d-md-inline">
-          <button className="rounded-circle border-0" id="sidebarToggle" />
-        </div>
       </ul>
       {/* End of Sidebar */}
     </div>
